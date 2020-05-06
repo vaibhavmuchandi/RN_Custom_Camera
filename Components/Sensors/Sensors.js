@@ -45,9 +45,9 @@ export default function Sensors() {
   let { x, y, z } = data;
   return (
     <View style={styles.sensor}>
-      <Text style={styles.text}>Accelerometer: </Text>
+      <Text style={styles.text}>Gyroscope: </Text>
       <Text style={styles.text}>
-        x: {round(x)} y: {round(y)} z: {round(z)}
+        x: {round(x).toFixed(4)*100} y: {round(y).toFixed(4)*100} z: {round(z).toFixed(4)*100}
       </Text>
     </View>
   );

@@ -1,18 +1,13 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import DentCamera from './Components/Camera/Camera';
+import React, { Component } from 'react';
+import { AppRegistry, View } from 'react-native';
+import Routes from './Routes.js'
 
-export default function App() {
-  return (
-      <DentCamera/>
-  );
+class DentArtApp extends Component {
+   render() {
+      return (
+         <Routes />
+      )
+   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default DentArtApp
+AppRegistry.registerComponent('DentArtApp', () => DentArtApp)

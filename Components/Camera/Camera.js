@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, TouchableOpacity, Image, Dimensions } from 'react-native';
+import { Text, View, TouchableOpacity, Image, ImageBackground, Dimensions } from 'react-native';
 import { Camera } from 'expo-camera';
 import Sensors from '../Sensors/Sensors';
-import CaptureButton from '../UI/CaptureButton/CaptureButton'
+import * as MediaLibrary from 'expo-media-library';
+import * as Permissions from 'expo-permissions';
 
 export default function DentCamera() {
   const [hasPermission, setHasPermission] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
-  const image = { uri: "http://www.pngonly.com/wp-content/uploads/2017/05/Ruler-PNG-Image.png"};
-  const windowWidth = Dimensions.get('screen').width;
-  const windowHeight = Dimensions.get('screen').height;
-  const windowRatio = Dimensions.get('screen').scale;
+  const windowWidth = Dimensions.get('window').width;
+  const windowHeight = Dimensions.get('window').height;
 
   useEffect(() => {
     (async () => {
       const { status } = await Camera.requestPermissionsAsync();
+      const  camRollState  = await Permissions.askAsync(Permissions.CAMERA_ROLL)
       setHasPermission(status === 'granted');
     })();
   }, []);
@@ -26,30 +26,40 @@ export default function DentCamera() {
     return <Text>No access to camera</Text>;
   }
 
-  snap = async () => {
-    if (this.camera) {
-      let photo = await this.camera.takePictureAsync();
-      console.log(photo);
-    }
+
+  takePictureAndCreateAlbum = async () => {
+    console.log('tpaca');
+    const { uri } = await this.camera.takePictureAsync();
+    console.log('uri', uri);
+    const asset = await MediaLibrary.createAssetAsync(uri);
+    console.log('asset', asset);
   };
   return (
     <View style={{ flex: 1 }}>
-      <Camera type={type} ref={ref => {
-        this.camera = ref;}}>
-      <Sensors style={{backgroundColor: 'transparent'}}/>
-      <View>
-        <Image
+      <Camera style={{ flex: 1}} type={type} ref={ref => {
+        this.camera = ref;
+      }}>
+      <Sensors/>
+      <View style={{paddingTop: 300}}>
+        <ImageBackground source={{ uri: 'http://www.pngall.com/wp-content/uploads/2016/06/Ruler-Transparent.png' }} style={{ width: windowWidth, height: 100, zIndex: 100}}/>
+      </View>
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: 'transparent',
+            flexDirection: 'row',
+          }}>
+          <TouchableOpacity
             style={{
-                resizeMode:'contain',
-                width: windowWidth*windowRatio,
-                height: 500,
-                alignSelf: 'flex-start'
+              flex: 1,
+              alignSelf: 'flex-end',
+              alignItems: 'center',
             }}
-            source={image}
-            />
+            onPress={takePictureAndCreateAlbum}>
+            <Image source={require('../../assets/capture.png')} style={{width: 80, height: 80}}/>
+          </TouchableOpacity>
         </View>
       </Camera>
-      <Text onPress={snap}>Capture</Text>
     </View>
   );
 }
